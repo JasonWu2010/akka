@@ -289,7 +289,7 @@ private[remote] class ArteryTransport(_system: ExtendedActorSystem, _provider: R
   val eventPublisher = new EventPublisher(system, log, settings.LifecycleEventsLogLevel)
 
   private val codec: AkkaPduCodec = AkkaPduProtobufCodec
-  private val killSwitch: SharedKillSwitch = KillSwitches.shared("transportKillSwitch")
+  val killSwitch: SharedKillSwitch = KillSwitches.shared("transportKillSwitch")
   private[this] val streamCompletions = new AtomicReference(Map.empty[String, Future[Done]])
   @volatile private[this] var _shutdown = false
 

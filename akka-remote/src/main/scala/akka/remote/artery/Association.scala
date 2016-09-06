@@ -473,7 +473,9 @@ private[remote] class Association(
           case (((q, m), c), w) ⇒ ((q, m), (c, w))
         }
 
-      val (mergeHub, aeronSinkCompleted) = MergeHub.source[EnvelopeBuffer].toMat(transport.aeronSink(this))(Keep.both).run()(materializer)
+      val (mergeHub, aeronSinkCompleted) = MergeHub.source[EnvelopeBuffer]
+        .via(transport.killSwitch.flow[EnvelopeBuffer])
+        .toMat(transport.aeronSink(this))(Keep.both).run()(materializer)
 
       val values: Vector[((SendQueue.QueueValue[OutboundEnvelope], TestManagementApi), (Encoder.ChangeOutboundCompression, Future[Done]))] =
         (0 until outboundLanes).map { _ ⇒
